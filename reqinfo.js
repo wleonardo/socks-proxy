@@ -1,0 +1,40 @@
+const TypeList = {
+  IPv4: 0x01,
+  DomainName: 0x03,
+  IPv6: 0x04,
+};
+
+const log = require('./log.tool.js');
+
+function getPort(chunk) {
+  return chunk.readUIntBE(chunk.length - 2, 2).toString(10);
+}
+
+module.exports = function (chunk) {
+  let reqinfo = {
+    dest: '',
+  };
+
+  const type = chunk[3];
+  if (type === TypeList.IPv4) {
+    let ipBuffer = chunk.slice(4, 8);
+    reqinfo.port = getPort(chunk);
+    for (let i = 0; i < ipBuffer.length; i++) {
+      reqinfo.dest += `.${ipBuffer[i].toString(10)}`;
+    }
+    reqinfo.dest = reqinfo.dest.slice(1);
+  } else if (type === TypeList.DomainName) {
+    log('DomainName');
+    reqinfo.dest = chunk.slice(4, -2).toString('utf8');
+    reqinfo.port = getPort(chunk);
+  } else if (type === TypeList.IPv6) {
+    log('IPv6');
+    let ipBuffer = chunk.slice(4, -2);
+    let dest = '';
+    for (let i = 0; i < ipBuffer.length; i += 2) {
+      dest += `:${ipBuffer.slice(i, i + 2).toString('hex')}`;
+    }
+    reqinfo.dest = dest.slice(1);
+  }
+  return reqinfo;
+}
