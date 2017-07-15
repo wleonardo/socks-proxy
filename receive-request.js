@@ -29,7 +29,7 @@ async function receiveRequest(chunk) {
     req.setTimeout(60 * 1000);
     req.on('timeout', () => {
       console.error('req timeout');
-      req.close();
+      req.destroy();
       socket.close();
     });
     req.on('error', (e) => {

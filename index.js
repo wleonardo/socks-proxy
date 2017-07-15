@@ -13,6 +13,10 @@ function connectServer(socket) {
       console.error(e);
       errorSocketNumber++;
     });
+    socket.setTimeout(60 * 1000);
+    socket.on('timeout', () => {
+      socket.destroy();
+    });
     socket.on('close', () => {
       handleSocketNumber++;
       socketNumber--;
