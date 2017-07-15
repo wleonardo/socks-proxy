@@ -34,7 +34,7 @@ module.exports = async function (chunk) {
     reqinfo.dest = reqinfo.dest.slice(1);
   } else if (type === TypeList.DomainName) {
     log('DomainName');
-    var domainName = chunk.slice(4, -2).toString('utf8').replace('\r', '');
+    var domainName = chunk.slice(5, -2).toString('utf8').replace('\r', '');
     let ip = await dnsToIp(domainName);
     reqinfo.dest = ip;
     reqinfo.port = getPort(chunk);
