@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "node ./demo.js",
-    "prod": "export NODE_ENV=prod && pm2 start ./demo.js --name=${PWD##*/}"
+    "prod": "export NODE_ENV=prod && pm2 start ./demo.js --name=${PWD##*/}",
+    "prod-reload": "export NODE_ENV=prod && pm2 reload ${PWD##*/}"
   },
   "author": "wleonardo.github.io",
   "license": "ISC"
