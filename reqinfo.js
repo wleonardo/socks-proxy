@@ -1,3 +1,5 @@
+const dns = require('dns');
+
 const TypeList = {
   IPv4: 0x01,
   DomainName: 0x03,
@@ -10,11 +12,18 @@ function getPort(chunk) {
   return chunk.readUIntBE(chunk.length - 2, 2).toString(10);
 }
 
-module.exports = function (chunk) {
+function dnsToIp(domainName) {
+  return new Promise((resolve) => {
+    dns.lookup(domainName, (err, addresses, family) => {
+      resolve(addresses);
+    });
+  });
+}
+
+module.exports = async function (chunk) {
   let reqinfo = {
     dest: '',
   };
-
   const type = chunk[3];
   if (type === TypeList.IPv4) {
     let ipBuffer = chunk.slice(4, 8);
@@ -25,7 +34,9 @@ module.exports = function (chunk) {
     reqinfo.dest = reqinfo.dest.slice(1);
   } else if (type === TypeList.DomainName) {
     log('DomainName');
-    reqinfo.dest = chunk.slice(4, -2).toString('utf8');
+    var domainName = chunk.slice(4, -2).toString('utf8').replace('\r', '');
+    let ip = await dnsToIp(domainName);
+    reqinfo.dest = ip;
     reqinfo.port = getPort(chunk);
   } else if (type === TypeList.IPv6) {
     log('IPv6');
@@ -37,4 +48,4 @@ module.exports = function (chunk) {
     reqinfo.dest = dest.slice(1);
   }
   return reqinfo;
-}
+};

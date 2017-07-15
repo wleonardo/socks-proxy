@@ -13,7 +13,7 @@ function shakehand(chunk) {
   const NMETHODS = parseInt(chunk[1], 10);
   log(chunk);
   if (VERSION !== 5) {
-    log('socks version is not 5')
+    log('socks version is not 5');
     socket.end('socks version is not 5');
     return false;
   }

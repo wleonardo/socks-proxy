@@ -1,6 +1,6 @@
 const socksProxy = require('./index.js');
-
-console.log();
+const memoryLog = require('./memory-log.js');
 socksProxy({
   port: 1091,
 });
+memoryLog(`${__dirname}/log/`, 60 * 1000);
