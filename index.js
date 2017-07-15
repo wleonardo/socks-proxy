@@ -2,18 +2,19 @@ const net = require('net');
 const http = require('http');
 const shakehand = require('./shake-hand.js');
 var totalSocketNumber = 0;
-var handleSockerNumber = 0;
+var handleSocketNumber = 0;
 var socketNumber = 0;
+var errorSocketNumber = 0;
 function connectServer(socket) {
   socketNumber++;
   totalSocketNumber++;
   try {
     socket.on('error', (e) => {
       console.error(e);
-      socket.end();
+      errorSocketNumber++;
     });
-    socket.on('end', () => {
-      handleSockerNumber++;
+    socket.on('close', () => {
+      handleSocketNumber++;
       socketNumber--;
     });
     socket.once('data', shakehand.bind(socket));
@@ -33,8 +34,9 @@ function socksProxy(options) {
     });
     var r = JSON.stringify({
       totalSocketNumber,
-      handleSockerNumber,
-      socketNumber
+      handleSocketNumber,
+      socketNumber,
+      errorSocketNumber
     });
     response.write(r);
     response.end();

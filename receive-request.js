@@ -8,7 +8,7 @@ async function receiveRequest(chunk) {
   let reqinfo = await ReqInfo(chunk);
 
   if (reqinfo.dest === '127.0.0.1' || reqinfo.dest === 'localhost') {
-    socket.end();
+    socket.close();
     return false;
   }
   let resp = new Buffer(chunk.length);
@@ -30,7 +30,7 @@ async function receiveRequest(chunk) {
       socket.emit('error', e);
     });
   } catch (e) {
-    console.log('未捕捉错误: net.createConnection');
+    console.error('未捕捉错误: net.createConnection');
     socket.emit('error', e);
   }
 }

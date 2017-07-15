@@ -14,7 +14,7 @@ function shakehand(chunk) {
   log(chunk);
   if (VERSION !== 5) {
     log('socks version is not 5');
-    socket.end('socks version is not 5');
+    socket.close();
     return false;
   }
 
