@@ -25,6 +25,7 @@ module.exports = async function (chunk) {
     dest: '',
   };
   const type = chunk[3];
+  console.log(chunk);
   if (type === TypeList.IPv4) {
     let ipBuffer = chunk.slice(4, 8);
     reqinfo.port = getPort(chunk);
@@ -35,8 +36,10 @@ module.exports = async function (chunk) {
   } else if (type === TypeList.DomainName) {
     log('DomainName');
     var domainName = chunk.slice(5, -2).toString('utf8').replace('\r', '');
-    let ip = await dnsToIp(domainName);
-    reqinfo.dest = ip;
+    // let ip = await dnsToIp(domainName);
+    // reqinfo.dest = ip;
+    // reqinfo.port = getPort(chunk);
+    reqinfo.dest = domainName;
     reqinfo.port = getPort(chunk);
   } else if (type === TypeList.IPv6) {
     log('IPv6');

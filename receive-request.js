@@ -8,7 +8,7 @@ async function receiveRequest(chunk) {
   let reqinfo = await ReqInfo(chunk);
 
   if (reqinfo.dest === '127.0.0.1' || reqinfo.dest === 'localhost') {
-    socket.close();
+    socket.destroy();
     return false;
   }
   let resp = new Buffer(chunk.length);
@@ -30,7 +30,7 @@ async function receiveRequest(chunk) {
     req.on('timeout', () => {
       console.error('req timeout');
       req.destroy();
-      socket.close();
+      socket.destroy();
     });
     req.on('error', (e) => {
       socket.emit('error', e);
