@@ -15,7 +15,7 @@ function connectServer(socket) {
     });
     socket.setTimeout(60 * 1000);
     socket.on('timeout', () => {
-      socket.destroy();
+      socket.destroyed || socket.destroy();
     });
     socket.on('close', () => {
       handleSocketNumber++;

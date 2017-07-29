@@ -1,5 +1,4 @@
-const receiveRequest = require('./receive-request.js');
-const log = require('./log.tool.js');
+const passwordVerity = require('./password-verify.js');
 
 const AuthMethods = {
   NOAUTH: 0,
@@ -10,11 +9,10 @@ const AuthMethods = {
 function shakehand(chunk) {
   let socket = this;
   const VERSION = parseInt(chunk[0], 10);
+  // 客户端支持的认证方式的数量
   const NMETHODS = parseInt(chunk[1], 10);
-  log(chunk);
   if (VERSION !== 5) {
-    log('socks version is not 5');
-    socket.destroy();
+    socket.destroyed || socket.destroy();
     return false;
   }
 
@@ -23,9 +21,17 @@ function shakehand(chunk) {
     socket.methods.push(chunk[1 + i]);
   }
 
-  let res = new Buffer([VERSION, AuthMethods.NOAUTH]);
+  let isSupportPassrod = socket.methods.find(method => method === AuthMethods.USERPASS);
+  console.log(isSupportPassrod);
+  if (typeof isSupportPassrod === 'undefined') {
+    let res = new Buffer([VERSION, 0xFF]);
+    socket.write(res);
+    socket.destroyed || socket.destroy();
+    return false;
+  }
+  let res = new Buffer([VERSION, AuthMethods.USERPASS]);
   socket.write(res);
-  socket.once('data', receiveRequest.bind(socket));
+  socket.once('data', passwordVerity.bind(socket));
   return false;
 }
 

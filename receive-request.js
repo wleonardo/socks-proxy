@@ -7,18 +7,20 @@ async function receiveRequest(chunk) {
 
   let reqinfo = await ReqInfo(chunk);
 
-  if (reqinfo.dest === '127.0.0.1' || reqinfo.dest === 'localhost') {
-    socket.destroy();
-    return false;
-  }
   let resp = new Buffer(chunk.length);
   chunk.copy(resp);
-  log(reqinfo);
+  resp[0] = 0x05;
+
+  if (reqinfo.dest === '127.0.0.1' || reqinfo.dest === 'localhost') {
+    resp[1] = 0x02;
+    socket.write(resp);
+    return false;
+  }
+
   try {
     let req = net.createConnection(reqinfo.port, reqinfo.dest, (s) => {
       log('createConnection success');
       // 要在保证连接上目标服务器返回成功数据
-      resp[0] = 0x05;
       resp[1] = 0x00;
       log(resp);
       socket.write(resp);
@@ -28,12 +30,13 @@ async function receiveRequest(chunk) {
     });
     req.setTimeout(60 * 1000);
     req.on('timeout', () => {
-      console.error('req timeout');
-      req.destroy();
-      socket.destroy();
+      resp[1] = 0x06;
+      socket.write(resp);
+      req.destroyed || req.destroy();
     });
-    req.on('error', (e) => {
-      socket.emit('error', e);
+    req.on('error', () => {
+      resp[1] = 0x05;
+      socket.write(resp);
     });
   } catch (e) {
     console.error('未捕捉错误: net.createConnection');
