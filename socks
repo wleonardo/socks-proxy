@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const socksProxy = require('./index.js');
 
 new socksProxy({
