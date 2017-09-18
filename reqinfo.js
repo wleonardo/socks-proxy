@@ -32,7 +32,7 @@ module.exports = async function (chunk) {
     for (let i = 0; i < ipBuffer.length; i++) {
       reqinfo.dest += `.${ipBuffer[i].toString(10)}`;
     }
-    reqinfo.dest = reqinfo.dest.slice(1);
+    reqinfo.dest = reqinfo.dest.replace(/ /g, '').slice(1);
   } else if (type === TypeList.DomainName) {
     log('DomainName');
     var domainName = chunk.slice(5, -2).toString('utf8').replace('\r', '');
@@ -48,7 +48,7 @@ module.exports = async function (chunk) {
     for (let i = 0; i < ipBuffer.length; i += 2) {
       dest += `:${ipBuffer.slice(i, i + 2).toString('hex')}`;
     }
-    reqinfo.dest = dest.slice(1);
+    reqinfo.dest = dest.replace(/ /g, '').slice(1);
   }
   return reqinfo;
 };
