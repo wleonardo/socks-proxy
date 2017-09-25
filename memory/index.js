@@ -1,15 +1,14 @@
 const fork = require('child_process').fork;
+const Memory = require('./memory');
+
 var singleton;
 
-function Memory() {
-  console.log('123456');
-  if (singleton) {
-
-  } else {
+function Index(options) {
+  if (!singleton) {
     const child = fork(`${__dirname}/memory.js`);
-    console.log(child);
-    console.log(`fork return pid: ${child.pid}`);
+    singleton = new Memory(child, options);
   }
+  return singleton;
 }
 
-module.exports = Memory;
+module.exports = Index;

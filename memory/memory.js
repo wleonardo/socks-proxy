@@ -1,25 +1,21 @@
 const EventEmitter = require('events');
 
-function Memory(mprocess) {
-  // console.log(this);
-  // if (!(this instanceof Memory)) {
-  //   throw new Error('use new to create memory');
-  //   return false;
-  // }
-  // if (singleton) {
-  //   return singleton;
-  // }
-  // this.init();
+class Memory extends EventEmitter {
+  constructor(mprocess, options) {
+    super();
+    this.mprocess = mprocess;
+    this.options = options;
+    this.watch();
+  }
+  watch() {
+    setInterval(() => {
+      const data = this.getMemoryData();
+      this.emit('data', data);
+    }, this.options.interval);
+  }
+  getMemoryData() {
+    return process.memoryUsage();
+  }
 }
-
-// Memory.prototype.init = function () {
-//   console.log(this);
-//   this.fork();
-// };
-//
-// Memory.prototype.fork = function () {
-//   let childProcess = fork(__filename);
-//   console.log(childProcess);
-// };
 
 module.exports = Memory;

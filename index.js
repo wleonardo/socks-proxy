@@ -4,17 +4,13 @@ const statistics = require('./statistics');
 const shakehandDataGen = require('./shake-hand-data.js');
 const ReqInfo = require('./reqinfo.js');
 const Connect = require('./connect.js');
-const Memory = require('./memory/index.js');
+
 
 class socksProxy extends EventEmitter {
   constructor(options) {
     super();
     this.options = Object.create(options || {});
     this.statistics = Object.create(statistics);
-    if (this.options.memory) {
-      console.log(123);
-      this.memory = new Memory(this.options.memory);
-    }
   }
   /**
    * [listen 监听端口]

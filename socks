@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const socksProxy = require('./index.js');
+var name = process.argv[2];
+var exec = require('child_process').exec;
 
-new socksProxy({
-  memory: {
-    interval: 5000
-  }
-}).listen(1091);
+var child = exec('pm2 start demo.js', (err, stdout, stderr) => {
+  if (err) throw err;
+  console.log(stdout);
+});
