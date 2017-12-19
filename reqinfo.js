@@ -1,3 +1,4 @@
+const dns = require('dns');
 const TypeList = {
   IPv4: 0x01,
   DomainName: 0x03,
@@ -9,6 +10,15 @@ const reqinfoData = {
   dest: '',
   port: 80
 };
+
+function dnsToIp(domain) {
+  return new Promise(function(resolve, reject) {
+    dns.lookup(domain, (err, address, family) => {
+      resolve(address);
+      console.log('address: %j family: IPv%s', address, family);
+    });
+  });
+}
 
 function getPort(data) {
   return data.readUIntBE(data.length - 2, 2).toString(10);
@@ -40,6 +50,9 @@ module.exports = class Reqinfo {
       }
       this.dest = this.dest.replace(/ /g, '').slice(1);
     }
+  }
+  async dnsToIp() {
+    this.dest = await dnsToIp(this.dest);
   }
   valid() {
     return this.type && this.port && this.dest;

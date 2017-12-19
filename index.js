@@ -1,9 +1,11 @@
 const EventEmitter = require('events');
 const net = require('net');
+const dns = require('dns');
 const statistics = require('./statistics');
 const shakehandDataGen = require('./shake-hand-data.js');
 const ReqInfo = require('./reqinfo.js');
 const Connect = require('./connect.js');
+
 
 
 class socksProxy extends EventEmitter {
@@ -82,10 +84,16 @@ class socksProxy extends EventEmitter {
     }
     return true;
   }
-  receiveRequest(data) {
+  async receiveRequest(data) {
     const connect = this;
     const [server, socket] = [connect.server, connect.socket];
     const reqinfo = new ReqInfo(data);
+
+    if (reqinfo.type === 3) {
+      await reqinfo.dnsToIp();
+    }
+
+    console.log(reqinfo)
 
     if (!reqinfo.valid()) {
       return socksProxy.destroyConnect(socket);
