@@ -1,4 +1,4 @@
-const socksProxy = require('./index.js');
+const socksProxy = require('./server.js');
 // const Memory = require('./memory/index.js');
 
 new socksProxy().listen(1091);
