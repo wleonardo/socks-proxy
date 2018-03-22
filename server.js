@@ -101,7 +101,7 @@ class socksProxy extends EventEmitter {
         const reqinfo = new ReqInfo(data);
 
         if (reqinfo.type === 3) {
-            await reqinfo.dnsToIp();
+            // await reqinfo.dnsToIp();
         }
 
         if (!reqinfo.valid()) {
