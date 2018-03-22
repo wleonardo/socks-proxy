@@ -13,8 +13,6 @@ net.Socket.prototype.sendData = function(data) {
     this.write(data);
 }
 
-
-
 class socksProxy extends EventEmitter {
     constructor(options) {
         super();
@@ -99,10 +97,6 @@ class socksProxy extends EventEmitter {
         const connect = this;
         const [server, socket] = [connect.server, connect.socket];
         const reqinfo = new ReqInfo(data);
-
-        if (reqinfo.type === 3) {
-            // await reqinfo.dnsToIp();
-        }
 
         if (!reqinfo.valid()) {
             return socksProxy.destroyConnect(socket);
