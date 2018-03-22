@@ -1,5 +1,6 @@
 const EventEmitter = require('events');
 const net = require('net');
+const through2 = require('through2');
 const dns = require('dns');
 const statistics = require('./statistics');
 const shakehandDataGen = require('./shake-hand-data.js');
@@ -117,16 +118,41 @@ class socksProxy extends EventEmitter {
         }
         try {
             const req = net.createConnection(reqinfo.port, reqinfo.dest, (s) => {
+                console.log('createConnection');
                 // 要在保证连接上目标服务器返回成功数据
                 resp[1] = 0x00;
                 socket.sendData(resp);
+                // req.pipe(socket);
+                // socket.pipe(req);
                 // 在客户端接受到连接上服务器的信息，则会发送完整的请求内容，直接转发给req
-                socket.on('package', (data) => {
-                    req.write(data);
-                });
-                req.on('data', (data) => {
-                    socket.sendData(data);
-                });
+                // let dataPull = new Buffer([]);
+                // req.on('data', () => {
+                //     console.log(data.length);
+                //     dataPull = Buffer.concat([dataPull, data], dataPull.length + data.length);
+                // });
+
+                socket.pipe(through2(function(data, enc, next) {
+                    data = aes.decrypt(data);
+                    this.push(data);
+                    next();
+                })).pipe(req);
+
+                req.pipe(through2(function(data, enc, next) {
+                    console.log("data.length:" + data.length);
+                    let times = Math.ceil(data.length / 5000);
+                    for (var i = 0; i < times; i++) {
+                        let start = i * 5000;
+                        let end = i * 5000 + 999;
+                        if (end >= data.length) {
+                            end = data.length - 1;
+                        }
+                        console.log(end - start + 1);
+                        let d = aes.decrypt(data.slice(start, end));
+                        this.push(d);
+                    }
+                    console.log('end');
+                    next();
+                })).pipe(socket);
             });
             req.setTimeout(30 * 1000);
             req.on('timeout', () => {

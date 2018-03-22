@@ -9,10 +9,10 @@ function encrypt(buffer) {
 }
 
 function decrypt(buffer) {
-    // if (!Buffer.isBuffer(encrypted)) {
-    //     console.error('encrypted is not buffer');
-    //     return false;
-    // }
+    if (!Buffer.isBuffer(buffer)) {
+        console.error('encrypted is not buffer');
+        return false;
+    }
     // console.log("encrypted");
     var decipher = crypto.createDecipher(algorithm, password)
     var dec = Buffer.concat([decipher.update(buffer), decipher.final()]);

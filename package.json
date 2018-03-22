@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "install" : "npm install",
+    "install": "npm install",
     "build": "nexe ./start.js --build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "pm2": "^2.7.1"
+    "pm2": "^2.7.1",
+    "through2": "^2.0.3"
   }
 }
