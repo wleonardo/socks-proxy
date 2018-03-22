@@ -138,19 +138,8 @@ class socksProxy extends EventEmitter {
                 })).pipe(req);
 
                 req.pipe(through2(function(data, enc, next) {
-                    console.log("data.length:" + data.length);
-                    let times = Math.ceil(data.length / 5000);
-                    for (var i = 0; i < times; i++) {
-                        let start = i * 5000;
-                        let end = i * 5000 + 999;
-                        if (end >= data.length) {
-                            end = data.length - 1;
-                        }
-                        console.log(end - start + 1);
-                        let d = aes.decrypt(data.slice(start, end));
-                        this.push(d);
-                    }
-                    console.log('end');
+                    data = aes.encrypt(data);
+                    this.push(data);
                     next();
                 })).pipe(socket);
             });
