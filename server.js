@@ -122,14 +122,6 @@ class socksProxy extends EventEmitter {
                 // 要在保证连接上目标服务器返回成功数据
                 resp[1] = 0x00;
                 socket.sendData(resp);
-                // req.pipe(socket);
-                // socket.pipe(req);
-                // 在客户端接受到连接上服务器的信息，则会发送完整的请求内容，直接转发给req
-                // let dataPull = new Buffer([]);
-                // req.on('data', () => {
-                //     console.log(data.length);
-                //     dataPull = Buffer.concat([dataPull, data], dataPull.length + data.length);
-                // });
 
                 socket.pipe(through2(function(data, enc, next) {
                     data = aes.decrypt(data);
